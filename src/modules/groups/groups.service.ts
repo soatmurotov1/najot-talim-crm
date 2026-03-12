@@ -2,25 +2,51 @@ import { BadRequestException, ConflictException, ForbiddenException, Injectable,
 import { Role, Status } from '@prisma/client';
 import { PrismaService } from 'src/common/prisma/prisma.service';
 import { CreateGroupDto } from './dto/create-group.dto';
+import { group } from 'console';
 
 @Injectable()
 export class GroupsService {
     constructor(private prisma: PrismaService) { }
 
-    async getGroupLessons(groupId: number, currentUser : {id : number, role:Role}) {
+    async getAllStudentGroupById(groupId: number) {
+        const groups = await this.prisma.studentGroup.findMany({
+            where: { 
+                groupId,
+                status: Status.ACTIVE
+             },
+            select: {
+                id: true,
+                student: {
+                    select: {
+                        id: true,
+                        fullName: true,
+                        photo: true,
+                        email: true
+                    }
+                }
+            }
+        })
 
+        const formattedGroups = groups.map(group => group.student)
+
+        return {
+            success: true,
+            data: formattedGroups
+        }
+    }
+
+    async getGroupLessons(groupId: number, currentUser : {id : number, role:Role}) {
         const existGroup = await this.prisma.group.findUnique({
             where: {
                 id:groupId,
                 status:"ACTIVE"
             }
         })
-
         if (!existGroup) {
             throw new NotFoundException("Group not found")
         }
 
-        if(currentUser.role == "TEACHER" && existGroup.teacherId != currentUser.id){
+        if(currentUser.role == Role.TEACHER && existGroup.teacherId != currentUser.id){
             throw new ForbiddenException("Bu sening guruhing emas")
         }
 

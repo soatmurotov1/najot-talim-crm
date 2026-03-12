@@ -14,6 +14,121 @@ export class StudentsService {
     private cloudinaryService: CloudinaryService,
   ) {}
 
+  async getMyGroups(currentUser: { id: number }) {
+    const groups = await this.prisma.studentGroup.findMany({
+      where: {
+        studentId: currentUser.id,
+        status: 'ACTIVE',
+      },
+      select: {
+        group: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+    const formattedGroups = groups.map((group) => group.group);
+    return {
+      success: true,
+      data: formattedGroups,
+    };
+  }
+
+  async getMyGroupLessonVideo(groupId: number, currentUser: { id: number }) {
+    const exitGroup = await this.prisma.studentGroup.findFirst({
+      where: {
+        groupId: groupId,
+        studentId: currentUser.id,
+        status: 'ACTIVE',
+      }
+    });
+
+    if (!exitGroup) {
+      throw new NotFoundException('Group not found');
+    }
+
+    const lessonVideo = await this.prisma.lessonVideo.findMany({
+      where: {
+        lesson: {
+          groupId: groupId,
+        }
+      },
+      select: {
+        id: true,
+        file: true,
+        created_at: true,
+        lesson: {
+          select: {
+            id: true,
+            title: true,
+          }
+        }
+      }
+    });
+    return {
+      success: true,
+      data: lessonVideo
+    }
+  }  
+
+  async getMyGroupHomework(
+    groupId: number,
+    lessonId: number,
+    currentUser: { id: number },
+  ) {
+    const group = await this.prisma.homework.findFirst({
+      where: {
+        lesson: {
+          groupId: groupId,
+        },
+        lessonId: lessonId,
+      },
+      select: {
+        id: true,
+        title: true,
+        file: true,
+        durationTime: true,
+        created_at: true,
+      },
+    });
+    if (!group) {
+      throw new NotFoundException('Homework is Not found');
+    }
+    return {
+      success: true,
+      data: group,
+    };
+  }
+
+  async getMyLessons(groupId: number, currentUser: { id: number }) {
+    const existsGroup = await this.prisma.studentGroup.findFirst({
+      where: {
+        studentId: currentUser.id,
+        groupId: groupId,
+        status: 'ACTIVE',
+      }
+    })
+    if (!existsGroup) {
+      throw new NotFoundException('Group not found');
+    }
+
+    const lessons = await this.prisma.lesson.findMany({
+      where: {
+        groupId
+      },
+      select: { 
+        id: true,
+        title: true
+      }
+    });
+    return {
+      success: true,
+      data: lessons,
+    };
+  }
+
   async createStudent(payload: CreateStudentDto, file?: Express.Multer.File) {
     let photoUrl: string | null = null;
 

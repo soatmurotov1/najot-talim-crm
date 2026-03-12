@@ -9,15 +9,15 @@ import { Role } from '@prisma/client';
 export class AuthService {
   constructor(
     private prisma: PrismaService,
-    private jwtService: JwtService,
+    private jwtService: JwtService
   ) {}
 
   private async generateToken(payload: {
-    id: number;
-    email: string;
-    role: Role;
+    id: number
+    email: string
+    role: Role
   }) {
-    return await this.jwtService.sign(payload);
+    return await this.jwtService.sign(payload)
   }
 
   async login(payload: LoginDto) {
@@ -71,9 +71,8 @@ export class AuthService {
       accessToken
     }
   }
-
   async loginStudent(payload: LoginDto) {
-    const existEmail = await this.prisma.teacher.findFirst({
+    const existEmail = await this.prisma.student.findFirst({
       where: {
         email: payload.email
       }
@@ -82,11 +81,9 @@ export class AuthService {
     if (!existEmail) {
       throw new BadRequestException('Login or password wrong')
     }
-
     if (!(await comparePassword(payload.password, existEmail.password))) {
       throw new BadRequestException('Login or password wrong')
     }
-
     const accessToken = await this.generateToken({
       id: existEmail.id,
       email: existEmail.email,

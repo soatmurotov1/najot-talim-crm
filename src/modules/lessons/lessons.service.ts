@@ -7,10 +7,33 @@ import { PrismaService } from 'src/common/prisma/prisma.service';
 export class LessonsService {
     constructor(private prisma: PrismaService) { }
 
+    async getLessonById(groupId: number) {
+        const existGroup = await this.prisma.group.findUnique({
+            where: { id: groupId, status: Status.ACTIVE }
+        })
+
+        if (!existGroup) {
+            throw new NotFoundException("Group not found with this id")
+        }
+
+        const lessons = await this.prisma.lesson.findMany({
+            where: {
+                groupId
+            },
+            select: {
+                id: true,
+                title: true,
+            }
+        })
+        return {
+            success: true,
+            data: lessons
+        }
+    }  
+             
     async createLesson(payload: CreateLessonDto, currentUser: { id: number, role: Role }) {
         const existGroup = await this.prisma.group.findUnique({
-            where: { id: payload.groupId, status: Status.ACTIVE },
-
+            where: { id: payload.groupId, status: Status.ACTIVE }
         })
 
         if (!existGroup) {
@@ -24,5 +47,9 @@ export class LessonsService {
                 userId: currentUser.role != Role.TEACHER ? currentUser.id : null
             }
         })
+        return {
+            success: true,
+            message: "Lesson created successfully"
+        }
     }
 }

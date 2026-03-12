@@ -8,7 +8,7 @@ export class CreateCourseDto {
   @IsNotEmpty()
   name: string
 
-  @ApiProperty({ example: "string"})
+  @ApiProperty({ example: 1})
   @IsNumber()
   @Min(1)
   durationMonth: number

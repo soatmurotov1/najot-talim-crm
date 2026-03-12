@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Query, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation } from '@nestjs/swagger';
@@ -13,6 +13,54 @@ import { Roles } from 'src/common/guard/decarator.roles';
 @ApiBearerAuth()
 export class StudentsController {
   constructor(private readonly studentsService: StudentsService) {}
+
+  @ApiOperation({summary: `${Role.STUDENT}`})
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.STUDENT)
+  @Get("my/groups")
+  GetMyGroups(
+    @Req() req: Request
+  ){
+    return this.studentsService.getMyGroups(req["user"])
+  }
+
+  @ApiOperation({summary: `${Role.STUDENT}`})
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.STUDENT)
+  @Get("my/group/lessonVideo/:groupId")
+  GetMyGroupLessonVideo(
+    @Param("groupId", ParseIntPipe) groupId: number,
+    @Req() req: Request
+  ){
+    return this.studentsService.getMyGroupLessonVideo(groupId, req["user"])
+  }
+
+
+  @ApiOperation({summary: `${Role.STUDENT}`})
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.STUDENT)
+  @Get("my/lessons/:groupId")
+  GetMyLessons(
+    @Param("groupId", ParseIntPipe) groupId: number,
+    @Req() req: Request
+  ){
+    return this.studentsService.getMyLessons(groupId, req["user"])
+  }
+
+
+  @ApiOperation({summary: `${Role.STUDENT}`})
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles(Role.STUDENT)
+  @Get("my/group/homework/:groupId")
+  GetMyGroupsHomework(
+    @Param("groupId", ParseIntPipe) groupId: number,
+    @Query("lessonId", ParseIntPipe) lessonId: number,
+    @Req() req: Request
+  ){
+    return this.studentsService.getMyGroupHomework(groupId, lessonId, req["user"])
+  }
+
+
   @ApiOperation({ summary: `${Role.SUPERADMIN}, ${Role.ADMIN}` })
   @ApiConsumes('multipart/form-data')
   @ApiBody({

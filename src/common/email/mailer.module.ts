@@ -14,7 +14,7 @@ import { join } from 'path';
         },
       },
       defaults: {
-        from: `Soatmurotov Abrorbek`,
+        from: `"Soatmurotov Abrorbek" <${process.env.GMAIL_USER}>`,
       },
       template: {
         dir: join(process.cwd(), 'template'),

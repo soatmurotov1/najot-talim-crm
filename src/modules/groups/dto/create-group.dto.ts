@@ -4,36 +4,36 @@ import { WeekDays } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateGroupDto {
-    @ApiProperty()
+    @ApiProperty({ example: 1})
     @IsInt()
     @Type(() => Number)
-    teacherId: number;
+    teacherId: number
 
-    @ApiProperty()
+    @ApiProperty({ example: 1})
     @IsInt()
     @Type(() => Number)
-    roomId: number;
+    roomId: number
 
-    @ApiProperty()
+    @ApiProperty({ example: 1})
     @IsInt()
     @Type(() => Number)
-    courseId: number;
+    courseId: number
 
-    @ApiProperty()
+    @ApiProperty({ example: "string"})
     @IsString()
-    name: string;
+    name: string
 
-    @ApiProperty()
+    @ApiProperty({ example: new Date().toLocaleDateString()})
     @IsDateString()
-    startDate: Date;
+    startDate: string
 
-    @ApiProperty()
+    @ApiProperty({ example: new Date().toLocaleTimeString()})
     @IsString()
-    startTime: string;
+    startTime: string
 
     @ApiProperty()
     @IsArray()
     @IsEnum(WeekDays, { each: true })
-    weekDays: WeekDays[];
+    weekDays: WeekDays[]
 
 }
