@@ -12,9 +12,18 @@ import { CreateGroupDto } from './dto/create-group.dto';
 export class GroupsController {
   constructor(private readonly groupService: GroupsService) {}
 
-  @ApiOperation({
-    summary: `${Role.SUPERADMIN}, ${Role.ADMIN}, ${Role.TEACHER}`,
-  })
+  @ApiOperation({ summary: `${Role.SUPERADMIN}, ${Role.ADMIN}, ${Role.TEACHER}`})
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('ADMIN', 'SUPERADMIN', 'TEACHER')
+  @Get("students/:groupId")
+  getAllStudentGroupById(
+    @Param("groupId", ParseIntPipe) groupId: number
+  ) {
+    return this.groupService.getAllStudentGroupById(groupId)
+  }
+
+
+  @ApiOperation({ summary: `${Role.SUPERADMIN}, ${Role.ADMIN}, ${Role.TEACHER}`})
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('ADMIN', 'SUPERADMIN', 'TEACHER')
   @Get('lesson/:groupId')

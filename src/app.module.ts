@@ -11,6 +11,7 @@ import { TeachersModule } from './modules/teaches/teaches.module';
 import { UserSeeder } from './common/seed/user.seed';
 import { CourseModule } from './modules/course/course.module';
 import { GroupsModule } from './modules/groups/groups.module';
+import { AttendanceModule } from './modules/attendance/attendance.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { GroupsModule } from './modules/groups/groups.module';
     RoomsModule,
     LessonsModule,
     GroupsModule,
+    AttendanceModule,
   ],
   controllers: [],
   providers: [UserSeeder],
