@@ -1,4 +1,19 @@
-import { PartialType } from '@nestjs/swagger';
-import { CreateAttendanceDto } from './create-attendance.dto';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsInt, IsBoolean, IsOptional, IsNotEmpty } from 'class-validator';
 
-export class UpdateAttendanceDto extends PartialType(CreateAttendanceDto) {}
+export class UpdateAttendanceDto {
+  @ApiProperty({ example: 1 })
+  @IsInt()
+  @IsNotEmpty()
+  lessonId: number
+
+  @ApiProperty({ example: 1 })
+  @IsInt()
+  @IsNotEmpty()
+  studentId: number;
+
+  @ApiProperty({ example: true })
+  @IsBoolean()
+  @IsNotEmpty()
+  isPresent: boolean
+}

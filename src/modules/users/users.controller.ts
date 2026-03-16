@@ -32,8 +32,8 @@ export class UsersController {
   })
   @UseInterceptors(
     FileInterceptor('photo', {
-      storage: memoryStorage(),
-    }),
+      storage: memoryStorage()
+    })
   )
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN, Role.SUPERADMIN)

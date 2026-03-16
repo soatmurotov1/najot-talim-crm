@@ -45,14 +45,9 @@ enum WeekDays {
 
 enum HomeworkStatus {
   APPROVED
-  REJECTED
   PENDING
-}
-
-enum HomeworkStatusStudent {
-  COMPLETED
-  MISSED
-  DELAY
+  NOT_REVIEWED
+  REJECTED
 }
 
 model User {
@@ -219,6 +214,7 @@ model Homework {
   id           Int      @id @default(autoincrement())
   lessonId     Int
   userId       Int?
+  groupId      Int
   teacherId    Int?
   title        String
   file         String?
@@ -236,6 +232,7 @@ model Homework {
 model LessonVideo {
   id         Int      @id @default(autoincrement())
   lessonId   Int
+  groupId    Int
   userId     Int?
   teacherId  Int?
   file       String
@@ -251,8 +248,7 @@ model HomeworkResponse {
   homeworkId Int
   studentId  Int
   title      String
-  file       String?
-  status     HomeworkStatusStudent
+  file       String?  
   created_at DateTime              @default(now())
   updated_at DateTime              @updatedAt
 

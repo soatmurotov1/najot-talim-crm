@@ -12,6 +12,8 @@ import { UserSeeder } from './common/seed/user.seed';
 import { CourseModule } from './modules/course/course.module';
 import { GroupsModule } from './modules/groups/groups.module';
 import { AttendanceModule } from './modules/attendance/attendance.module';
+import { HomeworkModule } from './modules/homework/homework.module';
+import { LessonVideosModule } from './modules/lesson-videos/lesson-videos.module';
 
 @Module({
   imports: [
@@ -30,6 +32,8 @@ import { AttendanceModule } from './modules/attendance/attendance.module';
     LessonsModule,
     GroupsModule,
     AttendanceModule,
+    HomeworkModule,
+    LessonVideosModule,
   ],
   controllers: [],
   providers: [UserSeeder],

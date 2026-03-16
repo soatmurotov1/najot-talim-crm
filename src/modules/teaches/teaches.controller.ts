@@ -60,13 +60,37 @@ export class TeachersController {
     return this.teachersService.getOneTeacher(+id);
   }
 
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        fullName: { type: 'string' },
+        email: { type: 'string' },
+        password: { type: 'string' },
+        position: { type: 'string' },
+        experience: { type: 'number', example: 4 },
+        photo: { type: 'string', format: 'binary', nullable: true },
+      },
+    },
+  })
+  @UseInterceptors(
+    FileInterceptor('photo', {
+      storage: memoryStorage(),
+    }),
+  )
   @UseGuards(AuthGuard, RolesGuard)
-  @Roles(Role.ADMIN, Role.SUPERADMIN, Role.ADMINSTRATOR, Role.MANAGEMENT)
-  @ApiOperation({ summary: `${Role.SUPERADMIN}, ${Role.ADMIN}, ${Role.ADMINSTRATOR}, ${Role.MANAGEMENT}`})
-  @Put()
-  updateTeacher(@Param('id') id: string, @Body() payload: UpdateTeachersDto) {
-    return this.teachersService.updateTeacher(+id, payload);
+  @Roles(Role.ADMIN, Role.SUPERADMIN)
+  @ApiOperation({ summary: `${Role.SUPERADMIN}, ${Role.ADMIN}` })
+  @Put(':id')
+  updateTeacherById(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() payload: UpdateTeachersDto,
+    @UploadedFile() file?: Express.Multer.File
+  ) {
+    return this.teachersService.updateTeacherById(id, payload, file)
   }
+
 
   @UseGuards(AuthGuard, RolesGuard)
   @Roles(Role.ADMIN, Role.SUPERADMIN)
@@ -74,22 +98,5 @@ export class TeachersController {
   @Delete(':id')
   async deleteTeacher(@Param('id', ParseIntPipe) id: number) {
     return this.teachersService.deleteTeacher(id)
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
   }
 }
