@@ -63,24 +63,30 @@ export class TeachersService {
     };
   }
 
-  async updateTeacher(id: number, payload: UpdateTeachersDto) {
-    const teacher = await this.prisma.teacher.findUnique({ where: { id } });
+  async updateTeacherById(id: number, payload: UpdateTeachersDto, file?: Express.Multer.File) {
+    const teacher = await this.prisma.teacher.findUnique({
+      where: { id }
+    })
     if (!teacher) {
-      throw new NotFoundException('Teacher is Not found');
+      throw new NotFoundException(`Not found teacherId ${id}`)
     }
-    const updateData: any = { ...payload };
-    if (payload.experience) {
-      updateData.experience = Number(payload.experience);
+    let photoUrl: string | null = teacher.photo;
+
+    if (file) {
+      photoUrl = await this.cloudinaryService.uploadFile(file, 'teachers');
     }
     await this.prisma.teacher.update({
       where: { id },
-      data: updateData,
-    });
-
+      data: {
+        ...payload,
+        experience: payload.experience ? Number(payload.experience) : undefined,
+        photo: photoUrl,
+      },
+    })
     return {
       success: true,
       message: 'Teacher updated successfully',
-    };
+    }
   }
 
   async deleteTeacher(id: number) {
